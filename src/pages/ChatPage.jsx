@@ -16,7 +16,7 @@ export default function ChatPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isStreaming, setIsStreaming] = useState(false);
     const [detailsOpen, setDetailsOpen] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [selectedService, setSelectedService] = useState(config.services.default); // Default service
 
     // Ref to abort controller for stopping generation
@@ -86,7 +86,9 @@ export default function ChatPage() {
     const handleNewChat = () => {
         setCurrentChatId(null);
         setMessages([]);
-        setSidebarOpen(false); // Close mobile sidebar
+        if (window.innerWidth < 1024) {
+            setSidebarOpen(false); // Close mobile sidebar
+        }
     };
 
     const handleDeleteChat = async (chatId) => {
@@ -258,9 +260,6 @@ export default function ChatPage() {
                         >
                             <Menu className="h-5 w-5" />
                         </button>
-                        <div className="font-semibold text-lg">
-                            {currentChatId ? (conversations.find(c => c.id === currentChatId)?.title || "Chat") : "New Chat"}
-                        </div>
                     </div>
 
                     <div className="relative">

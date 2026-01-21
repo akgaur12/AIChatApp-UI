@@ -22,6 +22,12 @@ client.interceptors.request.use(
     }
 );
 
+let onLogout = null;
+
+export const setLogoutHandler = (handler) => {
+    onLogout = handler;
+};
+
 // Add a response interceptor to handle token expiration
 client.interceptors.response.use(
     (response) => response,
@@ -29,8 +35,9 @@ client.interceptors.response.use(
         if (error.response && error.response.status === 401) {
             // Token expired or invalid
             localStorage.removeItem('token');
-            // Ideally redirect to login, but we can handle that in the UI or Context
-            // window.location.href = '/login'; 
+            if (onLogout) {
+                onLogout();
+            }
         }
         return Promise.reject(error);
     }

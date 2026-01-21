@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import client from '../api/client';
+import client, { setLogoutHandler } from '../api/client';
 import { config } from '../config';
-import { parseJwt } from '../lib/jwt';
+import { parseJwt, isTokenExpired } from '../lib/jwt';
 
 const AuthContext = createContext(null);
 
@@ -29,12 +29,22 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        // Check if token exists
+        // Register logout handler with API client
+        setLogoutHandler(logout);
+
+        // Check if token exists and is valid
         const token = localStorage.getItem('token');
         if (token) {
-            setUserFromToken(token);
+            if (isTokenExpired(token)) {
+                logout();
+            } else {
+                setUserFromToken(token);
+            }
         }
         setLoading(false);
+
+        // Clean up handler on unmount (though AuthProvider usually persists)
+        return () => setLogoutHandler(null);
     }, []);
 
     const login = async (email, password) => {

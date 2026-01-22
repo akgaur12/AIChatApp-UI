@@ -7,6 +7,7 @@ import { cn } from '../lib/utils';
 export default function ChangePasswordModal({ isOpen, onClose }) {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -23,6 +24,12 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
             return;
         }
 
+        if (newPassword !== confirmPassword) {
+            setError('New passwords do not match.');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             await client.put(config.endpoints.auth.changePassword, {
                 old_password: oldPassword,
@@ -31,6 +38,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
             setSuccess('Password updated successfully.');
             setOldPassword('');
             setNewPassword('');
+            setConfirmPassword('');
             setTimeout(() => {
                 onClose();
                 setSuccess('');
@@ -57,7 +65,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                 <div className="flex flex-col space-y-1.5 text-center sm:text-left mb-4">
                     <h3 className="text-lg font-semibold leading-none tracking-tight">Change Password</h3>
                     <p className="text-sm text-muted-foreground">
-                        Enter your current password and a new password.
+                        Enter your current password and your new password twice to confirm.
                     </p>
                 </div>
 
@@ -92,6 +100,24 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 pl-10 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 placeholder="****** (min 6 chars)"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" htmlFor="confirm-password">
+                            Confirm New Password
+                        </label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <input
+                                id="confirm-password"
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 pl-10 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="******"
                                 required
                             />
                         </div>

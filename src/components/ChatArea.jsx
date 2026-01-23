@@ -28,7 +28,7 @@ export default function ChatArea({ messages, isLoading, isStreaming }) {
 
     return (
         <div className="flex-1 overflow-y-auto scrollbar-fancy" ref={scrollRef}>
-            <div className="flex flex-col pb-20"> {/* pb-20 to account for input area fixed at bottom or just spacing */}
+            <div className="flex flex-col pb-4"> {/* reduced padding */}
                 {messages.map((msg, index) => (
                     <ChatMessage key={msg.id || index} message={msg} />
                 ))}

@@ -3,7 +3,7 @@ export const config = {
     API_BASE_URL: "http://0.0.0.0:45001",
 
     services: {
-        available: ["chat", "web_search"],
+        available: ["chat", "web_search", "thinking"],
         default: "chat"
     },
 

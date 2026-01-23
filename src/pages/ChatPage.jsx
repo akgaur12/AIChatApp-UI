@@ -104,7 +104,10 @@ export default function ChatPage() {
         }
     };
 
-    const handleSend = async (text) => {
+    const handleSend = async (text, options = {}) => {
+        const isWebSearch = options.isWebSearch || false;
+        const isThinking = options.isThinking || false;
+
         // Optimistic UI update
         const tempUserMsg = { id: Date.now() + '-u', role: 'user', content: text };
         setMessages(prev => [...prev, tempUserMsg]);
@@ -118,9 +121,13 @@ export default function ChatPage() {
         abortControllerRef.current = new AbortController();
 
         // Prepare payload
+        let serviceName = selectedService;
+        if (isWebSearch) serviceName = 'web_search';
+        else if (isThinking) serviceName = 'thinking';
+
         const payload = {
             user_query: text,
-            service_name: selectedService,
+            service_name: serviceName,
             conversation_id: currentChatId
         };
 
@@ -250,29 +257,6 @@ export default function ChatPage() {
 
             {/* Main Content */}
             <div className="flex flex-1 flex-col h-full w-full relative">
-
-                {/* Header - Mobile Menu & Model Selector */}
-                <div className="h-14 border-b flex items-center px-4 justify-between bg-background/50 backdrop-blur top-0 sticky z-10">
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setSidebarOpen(true)}
-                            className="lg:hidden p-2 -ml-2 hover:bg-accent rounded-md"
-                        >
-                            <Menu className="h-5 w-5" />
-                        </button>
-                    </div>
-
-                    <div className="relative">
-                        <select
-                            value={selectedService}
-                            onChange={(e) => setSelectedService(e.target.value)}
-                            className="appearance-none bg-accent/50 border-0 rounded-md py-1 px-3 pr-8 text-sm focus:ring-1 focus:ring-primary cursor-pointer font-medium"
-                        >
-                            {services.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none opacity-50" />
-                    </div>
-                </div>
 
                 {/* Messages */}
                 <ChatArea

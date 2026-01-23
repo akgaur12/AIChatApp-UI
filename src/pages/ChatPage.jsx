@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import client from '../api/client';
 import { config } from '../config';
@@ -10,14 +11,16 @@ import { cn } from '../lib/utils';
 
 export default function ChatPage() {
     const { user } = useAuth();
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [conversations, setConversations] = useState([]);
-    const [currentChatId, setCurrentChatId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isStreaming, setIsStreaming] = useState(false);
-    const [detailsOpen, setDetailsOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [selectedService, setSelectedService] = useState(config.services.default); // Default service
+    const [selectedService, setSelectedService] = useState(config.services.default);
+
+    const currentChatId = id || null;
 
     // Ref to abort controller for stopping generation
     const abortControllerRef = React.useRef(null);
@@ -34,23 +37,13 @@ export default function ChatPage() {
     }, []);
 
     const loadChat = useCallback(async (chatId) => {
+        if (!chatId) {
+            setMessages([]);
+            return;
+        }
         setIsLoading(true);
-        setMessages([]);
         try {
             const res = await client.get(config.endpoints.chat.conversation(chatId));
-            // Transform messages if needed to match our internal structure
-            // The backend returns: { ..., messages: [ { user:..., assistant:..., seq:... } ] }
-            // We need to flatten this to a list of { role: 'user'|'assistant', content: string }
-            // Wait, the backend schema in view_file showed:
-            // messages: [ { id, chat_id, user, assistant, ... } ]
-            // We need to map this to our display format.
-            // Actually, looking at `serialize_conversation` in chat_router.py:
-            // It returns `messages` list.
-            // Each message has `user` and `assistant` fields.
-            // We need to split them for the UI flow usually, OR the UI expects pairs?
-            // My ChatArea expects a list of messages. each message should probably correspond to a bubble.
-            // If the backend stores them as "turns" (User + Assistant), I should split them visually.
-
             const formattedMessages = [];
             if (res.data.messages) {
                 res.data.messages.forEach(turn => {
@@ -71,21 +64,28 @@ export default function ChatPage() {
                 });
             }
             setMessages(formattedMessages);
-            setCurrentChatId(chatId);
         } catch (error) {
             console.error("Failed to load chat", error);
+            navigate('/chat');
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         fetchConversations();
     }, [fetchConversations]);
 
+    useEffect(() => {
+        loadChat(id);
+    }, [id, loadChat]);
+
+    const handleSelectChat = (chatId) => {
+        navigate(`/chat/${chatId}`);
+    };
+
     const handleNewChat = () => {
-        setCurrentChatId(null);
-        setMessages([]);
+        navigate('/chat');
         if (window.innerWidth < 1024) {
             setSidebarOpen(false); // Close mobile sidebar
         }
@@ -192,7 +192,7 @@ export default function ChatPage() {
 
             // Stream finished
             if (!currentChatId && newConvId) {
-                setCurrentChatId(newConvId);
+                navigate(`/chat/${newConvId}`, { replace: true });
                 fetchConversations(); // Refresh list to show new chat title
             } else {
                 // Just refresh list to update timestamp/sort
@@ -247,7 +247,7 @@ export default function ChatPage() {
             <Sidebar
                 conversations={conversations}
                 currentChatId={currentChatId}
-                onSelectChat={loadChat}
+                onSelectChat={handleSelectChat}
                 onNewChat={handleNewChat}
                 onDeleteChat={handleDeleteChat}
                 onRenameChat={handleRenameChat}

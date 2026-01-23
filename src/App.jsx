@@ -19,11 +19,12 @@ function App() {
                         <Route path="/reset-password" element={<AuthPage />} />
 
                         {/* Private Routes */}
-                        <Route path="/" element={
+                        <Route path="/chat/:id?" element={
                             <ProtectedRoute>
                                 <ChatPage />
                             </ProtectedRoute>
                         } />
+                        <Route path="/" element={<Navigate to="/chat" replace />} />
 
                         {/* Catch all */}
                         <Route path="*" element={<Navigate to="/" replace />} />

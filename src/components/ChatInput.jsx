@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, StopCircle, Plus, Globe, X, Brain } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-export default function ChatInput({ onSend, isLoading, onStop }) {
+export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
     const [input, setInput] = useState('');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isWebSearch, setIsWebSearch] = useState(false);
@@ -47,28 +47,34 @@ export default function ChatInput({ onSend, isLoading, onStop }) {
     };
 
     return (
-        <div className="w-full bg-background border-t p-4 pb-2">
-            <div className="max-w-3xl mx-auto relative flex items-end gap-2 bg-muted/50 border rounded-xl p-2 shadow-sm">
+        <div className={cn(
+            "w-full max-w-3xl mx-auto relative transition-all duration-300",
+            isHero ? "scale-105" : "scale-100"
+        )}>
+            <div className={cn(
+                "relative flex items-end gap-2 bg-muted/30 border border-border/50 rounded-2xl p-2 shadow-lg backdrop-blur-sm transition-all duration-300 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20",
+                isHero && "p-3 shadow-2xl border-primary/20"
+            )}>
 
                 <div className="relative" ref={menuRef}>
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="h-10 w-10 flex items-center justify-center rounded-lg hover:bg-accent text-muted-foreground transition-colors shrink-0 mb-0.5 focus:outline-none"
+                        className="h-9 w-9 flex items-center justify-center rounded-xl hover:bg-accent text-muted-foreground transition-all shrink-0 mb-0.5 focus:outline-none"
                     >
-                        <Plus className={cn("h-5 w-5 transition-transform", isMenuOpen && "rotate-45")} />
+                        <Plus className={cn("h-5 w-5 transition-transform duration-300", isMenuOpen && "rotate-45")} />
                     </button>
 
                     {isMenuOpen && (
-                        <div className="absolute bottom-full left-0 mb-2 w-48 bg-popover border rounded-lg shadow-lg py-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                        <div className="absolute bottom-full left-0 mb-3 w-56 bg-popover/90 backdrop-blur-md border border-border rounded-xl shadow-2xl py-1.5 z-50 animate-in fade-in slide-in-from-bottom-3 duration-300 ring-1 ring-black/5">
                             <button
                                 onClick={() => {
                                     setIsWebSearch(true);
                                     setIsThinking(false);
                                     setIsMenuOpen(false);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors focus:outline-none"
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent transition-colors focus:outline-none font-medium"
                             >
-                                <Globe className="h-4 w-4 text-primary" />
+                                <Globe className="h-4 w-4 text-blue-500" />
                                 <span>Websearch</span>
                             </button>
                             <button
@@ -77,50 +83,51 @@ export default function ChatInput({ onSend, isLoading, onStop }) {
                                     setIsWebSearch(false);
                                     setIsMenuOpen(false);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors focus:outline-none"
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent transition-colors focus:outline-none font-medium"
                             >
-                                <Brain className="h-4 w-4 text-primary" />
+                                <Brain className="h-4 w-4 text-purple-500" />
                                 <span>Thinking</span>
                             </button>
                         </div>
                     )}
                 </div>
 
-                <div className="flex-1 flex flex-col gap-1">
+                <div className="flex-1 flex flex-col gap-1.5">
                     <textarea
                         ref={textareaRef}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="Send a message..."
-                        className="w-full max-h-[200px] min-h-[44px] bg-transparent border-0 focus:ring-0 focus:outline-none resize-none py-3 px-2 text-sm leading-relaxed scrollbar-minimal"
+                        placeholder="Message AI Assistant..."
+                        className="w-full max-h-[200px] min-h-[44px] bg-transparent border-0 focus:ring-0 focus:outline-none focus:ring-offset-0 resize-none py-2.5 px-2 text-[15px] leading-relaxed scrollbar-minimal placeholder:text-muted-foreground/60 transition-all selection:bg-primary/20"
                         rows={1}
                         disabled={isLoading && !onStop}
+                        style={{ outline: 'none', WebkitTapHighlightColor: 'transparent', boxShadow: 'none' }}
                     />
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 px-1">
                         {isWebSearch && (
-                            <div className="flex items-center gap-1.5 self-start bg-primary/10 text-primary px-2 py-1 rounded-md text-xs font-medium animate-in zoom-in-95 duration-200 mb-1">
+                            <div className="flex items-center gap-2 self-start bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-lg text-[13px] font-semibold animate-in zoom-in-95 duration-200 border border-blue-500/20">
                                 <Globe className="h-3.5 w-3.5" />
                                 <span>Web Search</span>
                                 <button
                                     onClick={() => setIsWebSearch(false)}
-                                    className="ml-1 hover:bg-primary/20 rounded-full p-0.5 transition-colors focus:outline-none"
+                                    className="ml-1 hover:bg-blue-500/20 rounded-md p-0.5 transition-colors focus:outline-none"
                                 >
-                                    <X className="h-3 w-3" />
+                                    <X className="h-3.5 w-3.5" />
                                 </button>
                             </div>
                         )}
 
                         {isThinking && (
-                            <div className="flex items-center gap-1.5 self-start bg-purple-500/10 text-purple-600 px-2 py-1 rounded-md text-xs font-medium animate-in zoom-in-95 duration-200 mb-1">
+                            <div className="flex items-center gap-2 self-start bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2.5 py-1 rounded-lg text-[13px] font-semibold animate-in zoom-in-95 duration-200 border border-purple-500/20">
                                 <Brain className="h-3.5 w-3.5" />
                                 <span>Thinking</span>
                                 <button
                                     onClick={() => setIsThinking(false)}
-                                    className="ml-1 hover:bg-purple-500/20 rounded-full p-0.5 transition-colors focus:outline-none"
+                                    className="ml-1 hover:bg-purple-500/20 rounded-md p-0.5 transition-colors focus:outline-none"
                                 >
-                                    <X className="h-3 w-3" />
+                                    <X className="h-3.5 w-3.5" />
                                 </button>
                             </div>
                         )}
@@ -130,19 +137,26 @@ export default function ChatInput({ onSend, isLoading, onStop }) {
                 <button
                     onClick={handleSubmit}
                     disabled={!input.trim() && !isLoading}
-                    className="h-10 w-10 flex items-center justify-center rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 mb-0.5 focus:outline-none"
+                    className={cn(
+                        "h-9 w-9 flex items-center justify-center rounded-xl transition-all shrink-0 mb-0.5 focus:outline-none",
+                        input.trim() || isLoading
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md scale-100"
+                            : "bg-muted text-muted-foreground/50 scale-95"
+                    )}
                 >
                     {isLoading ? (
-                        <StopCircle className="h-5 w-5 animate-pulse" />
+                        <StopCircle className="h-5 w-5" />
                     ) : (
-                        <Send className="h-5 w-5" />
+                        <Send className={cn("h-5 w-5", input.trim() && "animate-in slide-in-from-bottom-1")} />
                     )}
                 </button>
 
             </div>
-            <div className="text-center text-xs text-muted-foreground mt-2">
-                AI can make mistakes. Consider checking important information.
-            </div>
+            {!isHero && (
+                <div className="text-center text-[11px] text-muted-foreground/60 mt-3 font-medium tracking-tight">
+                    AI can make mistakes. Consider checking important information.
+                </div>
+            )}
         </div>
     );
 }

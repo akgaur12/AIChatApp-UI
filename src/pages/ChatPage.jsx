@@ -229,6 +229,19 @@ export default function ChatPage() {
         }
     };
 
+    const handleRegenerate = async (messageId) => {
+        // Find index of the AI message we want to regenerate
+        const aiMsgIndex = messages.findIndex(m => m.id === messageId);
+        if (aiMsgIndex === -1) return;
+
+        // The user message to regenerate from is the one immediately preceding this AI message
+        const userMsg = messages[aiMsgIndex - 1];
+        if (!userMsg || userMsg.role !== 'user') return;
+
+        // Re-send the user prompt without truncating (appends to bottom)
+        handleSend(userMsg.content);
+    };
+
     const handleRenameChat = async (chatId, newTitle) => {
         try {
             const res = await client.put(config.endpoints.chat.rename_conversation(chatId), { title: newTitle });
@@ -239,6 +252,8 @@ export default function ChatPage() {
             console.error("Failed to rename chat", err);
         }
     };
+
+    const isChatEmpty = messages.length === 0;
 
     return (
         <div className="flex h-screen w-full overflow-hidden bg-background">
@@ -263,14 +278,34 @@ export default function ChatPage() {
                     messages={messages}
                     isLoading={isLoading}
                     isStreaming={isStreaming}
+                    onRegenerate={handleRegenerate}
                 />
 
                 {/* Input */}
-                <ChatInput
-                    onSend={handleSend}
-                    isLoading={isLoading}
-                    onStop={isStreaming ? handleStop : null}
-                />
+                <div className={cn(
+                    "w-full transition-all duration-500 ease-in-out px-4",
+                    isChatEmpty
+                        ? "absolute inset-0 flex flex-col items-center justify-center bg-background z-10"
+                        : "bg-background pb-2"
+                )}>
+                    {isChatEmpty && (
+                        <div className="flex flex-col items-center mb-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <div className="h-16 w-16 mb-6 flex items-center justify-center">
+                                <img src="/logo.png" alt="Logo" className="h-full w-full object-contain" />
+                            </div>
+                            <h2 className="text-3xl font-bold text-foreground mb-3 tracking-tight">How can I help you today?</h2>
+                            {/* <p className="max-w-md text-muted-foreground text-lg">
+                                Ask me anything about code, writing, or just have a chat.
+                            </p> */}
+                        </div>
+                    )}
+                    <ChatInput
+                        onSend={handleSend}
+                        isLoading={isLoading}
+                        onStop={isStreaming ? handleStop : null}
+                        isHero={isChatEmpty}
+                    />
+                </div>
 
             </div>
         </div>

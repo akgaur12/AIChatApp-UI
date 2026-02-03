@@ -25,6 +25,7 @@ import {
 import ChangePasswordModal from './ChangePasswordModal';
 import ProfileModal from './ProfileModal';
 import AboutModal from './AboutModal';
+import ShareModal from './ShareModal';
 
 export default function Sidebar({
     conversations,
@@ -33,6 +34,8 @@ export default function Sidebar({
     onNewChat,
     onDeleteChat,
     onRenameChat,
+    onCopyChat,
+    onDownloadChat,
     isOpen,
     setIsOpen
 }) {
@@ -50,6 +53,10 @@ export default function Sidebar({
     const [activeMenuId, setActiveMenuId] = useState(null);
     const [menuPosition, setMenuPosition] = useState(null);
     const menuRef = useRef(null);
+
+    // Share Menu State
+    const [shareModalOpen, setShareModalOpen] = useState(false);
+    const [selectedShareChat, setSelectedShareChat] = useState(null);
 
     // Profile Menu State
     const [profileMenuPosition, setProfileMenuPosition] = useState(null);
@@ -307,7 +314,11 @@ export default function Sidebar({
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            console.log("Share chat", activeMenuId);
+                            const chat = conversations.find(c => c.id === activeMenuId);
+                            if (chat) {
+                                setSelectedShareChat(chat);
+                                setShareModalOpen(true);
+                            }
                             setActiveMenuId(null);
                         }}
                         className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
@@ -337,66 +348,69 @@ export default function Sidebar({
                         <Trash2 className="h-3.5 w-3.5" />
                         Delete
                     </button>
-                </div>,
+                </div >,
                 document.body
-            )}
+            )
+            }
 
             {/* Portal for User Profile Menu */}
-            {menuOpen && profileMenuPosition && createPortal(
-                <div
-                    ref={menuRef}
-                    className="fixed z-[100] w-56 rounded-md border bg-popover text-popover-foreground shadow-lg animate-in fade-in zoom-in-95"
-                    style={{
-                        left: profileMenuPosition.left,
-                        bottom: profileMenuPosition.bottom
-                    }}
-                >
-                    <div className="p-2 space-y-1">
-                        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                            My Account
+            {
+                menuOpen && profileMenuPosition && createPortal(
+                    <div
+                        ref={menuRef}
+                        className="fixed z-[100] w-56 rounded-md border bg-popover text-popover-foreground shadow-lg animate-in fade-in zoom-in-95"
+                        style={{
+                            left: profileMenuPosition.left,
+                            bottom: profileMenuPosition.bottom
+                        }}
+                    >
+                        <div className="p-2 space-y-1">
+                            <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                                My Account
+                            </div>
+                            <button
+                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                onClick={() => { setMenuOpen(false); setShowProfileModal(true); }}
+                            >
+                                <UserIconLucide className="mr-2 h-4 w-4" />
+                                <span>Profile</span>
+                            </button>
+                            <button
+                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                onClick={() => { setMenuOpen(false); setShowPasswordModal(true); }}
+                            >
+                                <KeyRound className="mr-2 h-4 w-4" />
+                                <span>Change Password</span>
+                            </button>
+                            <div className="h-px bg-muted my-1" />
+                            <button
+                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                            >
+                                {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                            </button>
+                            <div className="h-px bg-muted my-1" />
+                            <button
+                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                onClick={() => { setMenuOpen(false); setShowAboutModal(true); }}
+                            >
+                                <Info className="mr-2 h-4 w-4" />
+                                <span>About Us</span>
+                            </button>
+                            <div className="h-px bg-muted my-1" />
+                            <button
+                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-destructive hover:text-destructive-foreground cursor-pointer text-destructive"
+                                onClick={() => { setMenuOpen(false); logout(); }}
+                            >
+                                <LogOut className="mr-2 h-4 w-4" />
+                                <span>Log out</span>
+                            </button>
                         </div>
-                        <button
-                            className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                            onClick={() => { setMenuOpen(false); setShowProfileModal(true); }}
-                        >
-                            <UserIconLucide className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
-                        </button>
-                        <button
-                            className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                            onClick={() => { setMenuOpen(false); setShowPasswordModal(true); }}
-                        >
-                            <KeyRound className="mr-2 h-4 w-4" />
-                            <span>Change Password</span>
-                        </button>
-                        <div className="h-px bg-muted my-1" />
-                        <button
-                            className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                        >
-                            {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-                            <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                        </button>
-                        <div className="h-px bg-muted my-1" />
-                        <button
-                            className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                            onClick={() => { setMenuOpen(false); setShowAboutModal(true); }}
-                        >
-                            <Info className="mr-2 h-4 w-4" />
-                            <span>About Us</span>
-                        </button>
-                        <div className="h-px bg-muted my-1" />
-                        <button
-                            className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-destructive hover:text-destructive-foreground cursor-pointer text-destructive"
-                            onClick={() => { setMenuOpen(false); logout(); }}
-                        >
-                            <LogOut className="mr-2 h-4 w-4" />
-                            <span>Log out</span>
-                        </button>
-                    </div>
-                </div>,
-                document.body
-            )}
+                    </div>,
+                    document.body
+                )
+            }
 
             <ProfileModal
                 isOpen={showProfileModal}
@@ -410,6 +424,17 @@ export default function Sidebar({
             <AboutModal
                 isOpen={showAboutModal}
                 onClose={() => setShowAboutModal(false)}
+            />
+
+            <ShareModal
+                isOpen={shareModalOpen}
+                onClose={() => {
+                    setShareModalOpen(false);
+                    setSelectedShareChat(null);
+                }}
+                onCopy={() => onCopyChat && selectedShareChat ? onCopyChat(selectedShareChat.id) : null}
+                onDownload={() => onDownloadChat && selectedShareChat ? onDownloadChat(selectedShareChat.id, selectedShareChat.title) : null}
+                chatTitle={selectedShareChat?.title || "Chat"}
             />
         </>
     );

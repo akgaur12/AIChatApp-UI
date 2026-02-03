@@ -119,7 +119,7 @@ export default function AuthPage() {
                     <div className="relative z-20 mt-auto">
                         <blockquote className="space-y-2">
                             <p className="text-lg">
-                                &ldquo;Experience the future of conversation. Seamless, intelligent, and designed for you.&rdquo;
+                                Experience the future of conversation. Seamless, intelligent, and designed for you
                             </p>
                             {/* <footer className="text-sm">akgaur12</footer> */}
                         </blockquote>

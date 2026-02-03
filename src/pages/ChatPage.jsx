@@ -253,6 +253,48 @@ export default function ChatPage() {
         }
     };
 
+    const formatChatContent = (chatData) => {
+        if (!chatData || !chatData.messages) return "";
+        return chatData.messages.map(msg => {
+            const userPart = `User: ${msg.user}`;
+            const aiPart = msg.assistant ? `\nAI: ${msg.assistant}` : "";
+            return `${userPart}${aiPart}`;
+        }).join("\n\n");
+    };
+
+    const handleCopyChat = async (chatId) => {
+        try {
+            const res = await client.get(config.endpoints.chat.conversation(chatId));
+            const text = formatChatContent(res.data);
+            await navigator.clipboard.writeText(text);
+            // You might want to add a toast notification here
+            console.log("Chat copied to clipboard");
+        } catch (err) {
+            console.error("Failed to copy chat", err);
+            alert("Failed to copy chat to clipboard.");
+        }
+    };
+
+    const handleDownloadChat = async (chatId, title) => {
+        try {
+            const res = await client.get(config.endpoints.chat.conversation(chatId));
+            const text = formatChatContent(res.data);
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title || 'chat'}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (err) {
+            console.error("Failed to download chat", err);
+            alert("Failed to download chat.");
+        }
+    };
+
     const isChatEmpty = messages.length === 0;
 
     return (
@@ -266,6 +308,8 @@ export default function ChatPage() {
                 onNewChat={handleNewChat}
                 onDeleteChat={handleDeleteChat}
                 onRenameChat={handleRenameChat}
+                onCopyChat={handleCopyChat}
+                onDownloadChat={handleDownloadChat}
                 isOpen={sidebarOpen}
                 setIsOpen={setSidebarOpen}
             />

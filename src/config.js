@@ -14,7 +14,7 @@ export const config = {
             forgotPassword: "/auth/forget-password",
             resetPassword: "/auth/verify-otp-reset-password",
             changePassword: "/auth/reset-password",
-            // Add other auth routes if needed
+            deleteAccount: "/auth/delete-user",
         },
         chat: {
             base: "/chat",

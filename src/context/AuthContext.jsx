@@ -70,11 +70,21 @@ export const AuthProvider = ({ children }) => {
         await client.post(config.endpoints.auth.signup, { name, email, password, role: [role] });
     };
 
+    const deleteAccount = async () => {
+        try {
+            await client.delete(config.endpoints.auth.deleteAccount);
+            return true;
+        } catch (error) {
+            console.error("Delete account failed:", error);
+            throw error;
+        }
+    };
+
     // Provide other auth methods like forgot password wrapper if needed, 
     // but they can also be direct API calls in the components.
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, signup, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, signup, deleteAccount, loading }}>
             {children}
         </AuthContext.Provider>
     );

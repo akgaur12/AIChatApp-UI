@@ -104,6 +104,19 @@ export default function ChatPage() {
         }
     };
 
+    const handleDeleteAllConversations = async () => {
+        try {
+            const res = await client.delete(config.endpoints.chat.delete_all_conversations);
+            setConversations([]);
+            setMessages([]);
+            navigate('/chat');
+            return res.data;
+        } catch (err) {
+            console.error("Failed to delete all conversations", err);
+            throw err;
+        }
+    };
+
     const handleSend = async (text, options = {}) => {
         const isWebSearch = options.isWebSearch || false;
         const isThinking = options.isThinking || false;
@@ -307,6 +320,7 @@ export default function ChatPage() {
                 onSelectChat={handleSelectChat}
                 onNewChat={handleNewChat}
                 onDeleteChat={handleDeleteChat}
+                onDeleteAllConversations={handleDeleteAllConversations}
                 onRenameChat={handleRenameChat}
                 onCopyChat={handleCopyChat}
                 onDownloadChat={handleDownloadChat}

@@ -24,6 +24,7 @@ export const config = {
             conversation: (id) => `/chat/conversations/${id}`,
             rename_conversation: (id) => `/chat/conversations/${id}/rename`,
             delete_conversation: (id) => `/chat/conversations/${id}/delete`,
+            delete_all_conversations: "/chat/conversations",
         }
     }
 };

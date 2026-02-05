@@ -33,6 +33,7 @@ export default function Sidebar({
     onSelectChat,
     onNewChat,
     onDeleteChat,
+    onDeleteAllConversations,
     onRenameChat,
     onCopyChat,
     onDownloadChat,
@@ -419,6 +420,7 @@ export default function Sidebar({
                     setShowProfileModal(false);
                     setShowPasswordModal(true);
                 }}
+                onDeleteAllChats={onDeleteAllConversations}
             />
 
             <AboutModal

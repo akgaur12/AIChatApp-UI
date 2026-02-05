@@ -4,19 +4,23 @@ import { X, User as UserIcon, LogOut, KeyRound, Trash2, AlertTriangle, Check } f
 import { cn } from '../lib/utils';
 
 // Using a custom modal structure similar to ChangePasswordModal if UI components aren't available
-export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
+export default function ProfileModal({ isOpen, onClose, onPasswordChange, onDeleteAllChats }) {
     const { user, logout, deleteAccount } = useAuth();
     const [deleteStep, setDeleteStep] = React.useState(0); // 0: initial, 1: first confirm, 2: final confirm
+    const [chatDeleteStep, setChatDeleteStep] = React.useState(0); // 0: initial, 1: first confirm, 2: final confirm
     const [isDeleting, setIsDeleting] = React.useState(false);
     const [isSuccess, setIsSuccess] = React.useState(false);
+    const [successMessage, setSuccessMessage] = React.useState("");
     const [error, setError] = React.useState("");
 
     // Reset state when modal opens or closes
     React.useEffect(() => {
         if (!isOpen) {
             setDeleteStep(0);
+            setChatDeleteStep(0);
             setIsDeleting(false);
             setIsSuccess(false);
+            setSuccessMessage("");
             setError("");
         }
     }, [isOpen]);
@@ -33,6 +37,7 @@ export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
         setError("");
         try {
             await deleteAccount();
+            setSuccessMessage("Account and all associated data deleted successfully. Redirecting to login...");
             setIsSuccess(true);
             setTimeout(() => {
                 logout();
@@ -45,8 +50,31 @@ export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
         }
     };
 
+    const handleDeleteAllChats = async () => {
+        if (chatDeleteStep < 2) {
+            setChatDeleteStep(chatDeleteStep + 1);
+            return;
+        }
+
+        setIsDeleting(true);
+        setError("");
+        try {
+            const result = await onDeleteAllChats();
+            setSuccessMessage(result?.message || "All chat history deleted successfully.");
+            setIsSuccess(true);
+            setTimeout(() => {
+                onClose();
+            }, 2500); // Increased to 2.5 seconds to ensure readability
+        } catch (err) {
+            setError("Failed to delete chat history. Please try again.");
+            setIsDeleting(false);
+            setChatDeleteStep(0);
+        }
+    };
+
     const resetDelete = () => {
         setDeleteStep(0);
+        setChatDeleteStep(0);
         setError("");
     };
 
@@ -76,10 +104,9 @@ export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
                                 <Check className="h-8 w-8 text-green-500" />
                             </div>
                             <div className="text-center space-y-2">
-                                <h4 className="text-lg font-semibold text-foreground">Account Deleted</h4>
-                                <p className="text-sm text-muted-foreground">
-                                    Account and all associated data deleted successfully.<br />
-                                    Redirecting to login...
+                                <h4 className="text-lg font-semibold text-foreground">Success</h4>
+                                <p className="text-sm text-muted-foreground whitespace-pre-line">
+                                    {successMessage}
                                 </p>
                             </div>
                         </div>
@@ -102,7 +129,7 @@ export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
 
                             {/* Actions */}
                             <div className="grid gap-3">
-                                {deleteStep === 0 ? (
+                                {deleteStep === 0 && chatDeleteStep === 0 ? (
                                     <>
                                         <button
                                             onClick={() => {
@@ -125,11 +152,21 @@ export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
                                             Log Out
                                         </button>
 
+                                        <div className="h-px bg-border my-2" />
+
                                         <button
-                                            onClick={() => setDeleteStep(1)}
+                                            onClick={() => setChatDeleteStep(1)}
                                             className="flex items-center justify-center w-full rounded-md bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground px-4 py-2 text-sm font-medium shadow-sm transition-all border border-destructive/20"
                                         >
                                             <Trash2 className="mr-2 h-4 w-4" />
+                                            Delete All Chat History
+                                        </button>
+
+                                        <button
+                                            onClick={() => setDeleteStep(1)}
+                                            className="flex items-center justify-center w-full rounded-md bg-destructive/5 text-destructive/70 hover:bg-destructive hover:text-destructive-foreground px-4 py-2 text-sm font-medium shadow-sm transition-all border border-destructive/10"
+                                        >
+                                            <UserIcon className="mr-2 h-4 w-4" />
                                             Delete Account
                                         </button>
                                     </>
@@ -138,22 +175,41 @@ export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
                                         <div className="space-y-2">
                                             <h5 className="font-semibold text-destructive flex items-center gap-2">
                                                 <Trash2 className="h-4 w-4" />
-                                                {deleteStep === 1 ? "Delete Account?" : "Final Confirmation"}
+                                                {deleteStep > 0
+                                                    ? (deleteStep === 1 ? "Delete Account?" : "Final Confirmation")
+                                                    : (chatDeleteStep === 1 ? "Clear All Chats?" : "Final Confirmation")
+                                                }
                                             </h5>
                                             <p className="text-sm text-muted-foreground leading-relaxed">
-                                                {deleteStep === 1
-                                                    ? (
-                                                        <span className="flex items-start gap-2">
-                                                            <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
-                                                            <span className="text-foreground">Are you sure you want to delete your account? All your chats and conversation data will be permanently deleted.</span>
-                                                        </span>
-                                                    )
-                                                    : (
-                                                        <span className="flex items-start gap-2">
-                                                            <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
-                                                            <span className="text-foreground">This action is irreversible. All your data will be gone forever. Are you absolutely certain?</span>
-                                                        </span>
-                                                    )}
+                                                {deleteStep > 0 ? (
+                                                    deleteStep === 1
+                                                        ? (
+                                                            <span className="flex items-start gap-2">
+                                                                <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
+                                                                <span className="text-foreground">Are you sure you want to delete your account? All your chats and conversation data will be permanently deleted.</span>
+                                                            </span>
+                                                        )
+                                                        : (
+                                                            <span className="flex items-start gap-2">
+                                                                <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
+                                                                <span className="text-foreground">This action is irreversible. All your data will be gone forever. Are you absolutely certain?</span>
+                                                            </span>
+                                                        )
+                                                ) : (
+                                                    chatDeleteStep === 1
+                                                        ? (
+                                                            <span className="flex items-start gap-2">
+                                                                <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
+                                                                <span className="text-foreground">Are you sure you want to delete all your chat history? This cannot be undone.</span>
+                                                            </span>
+                                                        )
+                                                        : (
+                                                            <span className="flex items-start gap-2">
+                                                                <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />
+                                                                <span className="text-foreground">All conversations will be permanently removed. Proceed with clearing history?</span>
+                                                            </span>
+                                                        )
+                                                )}
                                             </p>
                                         </div>
                                         <div className="flex gap-2">
@@ -165,16 +221,19 @@ export default function ProfileModal({ isOpen, onClose, onPasswordChange }) {
                                                 Cancel
                                             </button>
                                             <button
-                                                onClick={handleDeleteAccount}
+                                                onClick={deleteStep > 0 ? handleDeleteAccount : handleDeleteAllChats}
                                                 disabled={isDeleting}
                                                 className={cn(
                                                     "flex-1 rounded-md px-3 py-2 text-sm font-medium shadow-sm transition-all",
-                                                    deleteStep === 1
+                                                    (deleteStep === 1 || chatDeleteStep === 1)
                                                         ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                                         : "bg-red-600 text-white hover:bg-red-700 animate-pulse"
                                                 )}
                                             >
-                                                {isDeleting ? "Deleting..." : deleteStep === 1 ? "Yes, Delete" : "Confirm Delete"}
+                                                {isDeleting
+                                                    ? "Processing..."
+                                                    : (deleteStep === 1 || chatDeleteStep === 1) ? "Yes, Delete" : "Confirm Delete"
+                                                }
                                             </button>
                                         </div>
                                         {error && <p className="text-[10px] text-red-500 text-center mt-2">{error}</p>}

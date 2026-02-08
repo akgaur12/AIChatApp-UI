@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, StopCircle, Plus, Globe, X, Brain } from 'lucide-react';
+import { Send, StopCircle, Plus, Globe, X, Brain, Image, Newspaper } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
@@ -7,6 +7,8 @@ export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isWebSearch, setIsWebSearch] = useState(false);
     const [isThinking, setIsThinking] = useState(false);
+    const [isImageSearch, setIsImageSearch] = useState(false);
+    const [isNewsSearch, setIsNewsSearch] = useState(false);
     const textareaRef = useRef(null);
     const menuRef = useRef(null);
 
@@ -15,7 +17,7 @@ export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
             textareaRef.current.style.height = 'inherit'; // Reset height
             textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
         }
-    }, [input, isWebSearch, isThinking]); // Reset height if badge appears/disappears
+    }, [input, isWebSearch, isThinking, isImageSearch, isNewsSearch]); // Reset height if badge appears/disappears
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -42,7 +44,7 @@ export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
             return;
         }
 
-        onSend(input, { isWebSearch, isThinking });
+        onSend(input, { isWebSearch, isThinking, isImageSearch, isNewsSearch });
         setInput('');
     };
 
@@ -70,6 +72,8 @@ export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
                                 onClick={() => {
                                     setIsWebSearch(true);
                                     setIsThinking(false);
+                                    setIsImageSearch(false);
+                                    setIsNewsSearch(false);
                                     setIsMenuOpen(false);
                                 }}
                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent transition-colors focus:outline-none font-medium"
@@ -81,12 +85,40 @@ export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
                                 onClick={() => {
                                     setIsThinking(true);
                                     setIsWebSearch(false);
+                                    setIsImageSearch(false);
+                                    setIsNewsSearch(false);
                                     setIsMenuOpen(false);
                                 }}
                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent transition-colors focus:outline-none font-medium"
                             >
                                 <Brain className="h-4 w-4 text-purple-500" />
                                 <span>Thinking</span>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsImageSearch(true);
+                                    setIsWebSearch(false);
+                                    setIsThinking(false);
+                                    setIsNewsSearch(false);
+                                    setIsMenuOpen(false);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent transition-colors focus:outline-none font-medium"
+                            >
+                                <Image className="h-4 w-4 text-emerald-500" />
+                                <span>Image search</span>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsNewsSearch(true);
+                                    setIsWebSearch(false);
+                                    setIsThinking(false);
+                                    setIsImageSearch(false);
+                                    setIsMenuOpen(false);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent transition-colors focus:outline-none font-medium"
+                            >
+                                <Newspaper className="h-4 w-4 text-orange-500" />
+                                <span>News search</span>
                             </button>
                         </div>
                     )}
@@ -126,6 +158,32 @@ export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
                                 <button
                                     onClick={() => setIsThinking(false)}
                                     className="ml-1 hover:bg-purple-500/20 rounded-md p-0.5 transition-colors focus:outline-none"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                </button>
+                            </div>
+                        )}
+
+                        {isImageSearch && (
+                            <div className="flex items-center gap-2 self-start bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-lg text-[13px] font-semibold animate-in zoom-in-95 duration-200 border border-emerald-500/20">
+                                <Image className="h-3.5 w-3.5" />
+                                <span>Image Search</span>
+                                <button
+                                    onClick={() => setIsImageSearch(false)}
+                                    className="ml-1 hover:bg-emerald-500/20 rounded-md p-0.5 transition-colors focus:outline-none"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                </button>
+                            </div>
+                        )}
+
+                        {isNewsSearch && (
+                            <div className="flex items-center gap-2 self-start bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2.5 py-1 rounded-lg text-[13px] font-semibold animate-in zoom-in-95 duration-200 border border-orange-500/20">
+                                <Newspaper className="h-3.5 w-3.5" />
+                                <span>News Search</span>
+                                <button
+                                    onClick={() => setIsNewsSearch(false)}
+                                    className="ml-1 hover:bg-orange-500/20 rounded-md p-0.5 transition-colors focus:outline-none"
                                 >
                                     <X className="h-3.5 w-3.5" />
                                 </button>

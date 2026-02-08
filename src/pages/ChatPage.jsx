@@ -120,6 +120,8 @@ export default function ChatPage() {
     const handleSend = async (text, options = {}) => {
         const isWebSearch = options.isWebSearch || false;
         const isThinking = options.isThinking || false;
+        const isImageSearch = options.isImageSearch || false;
+        const isNewsSearch = options.isNewsSearch || false;
 
         // Optimistic UI update
         const tempUserMsg = { id: Date.now() + '-u', role: 'user', content: text };
@@ -137,6 +139,8 @@ export default function ChatPage() {
         let serviceName = selectedService;
         if (isWebSearch) serviceName = 'web_search';
         else if (isThinking) serviceName = 'thinking';
+        else if (isImageSearch) serviceName = 'image_search';
+        else if (isNewsSearch) serviceName = 'news_search';
 
         const payload = {
             user_query: text,

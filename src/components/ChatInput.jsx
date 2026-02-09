@@ -2,13 +2,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, StopCircle, Plus, Globe, X, Brain, Image, Newspaper } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-export default function ChatInput({ onSend, isLoading, onStop, isHero }) {
+export default function ChatInput({
+    onSend,
+    isLoading,
+    onStop,
+    isHero,
+    isWebSearch,
+    setIsWebSearch,
+    isThinking,
+    setIsThinking,
+    isImageSearch,
+    setIsImageSearch,
+    isNewsSearch,
+    setIsNewsSearch
+}) {
     const [input, setInput] = useState('');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isWebSearch, setIsWebSearch] = useState(false);
-    const [isThinking, setIsThinking] = useState(false);
-    const [isImageSearch, setIsImageSearch] = useState(false);
-    const [isNewsSearch, setIsNewsSearch] = useState(false);
     const textareaRef = useRef(null);
     const menuRef = useRef(null);
 

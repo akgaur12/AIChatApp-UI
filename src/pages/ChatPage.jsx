@@ -19,6 +19,10 @@ export default function ChatPage() {
     const [isStreaming, setIsStreaming] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [selectedService, setSelectedService] = useState(config.services.default);
+    const [isWebSearch, setIsWebSearch] = useState(false);
+    const [isThinking, setIsThinking] = useState(false);
+    const [isImageSearch, setIsImageSearch] = useState(false);
+    const [isNewsSearch, setIsNewsSearch] = useState(false);
 
     const currentChatId = id || null;
 
@@ -255,8 +259,8 @@ export default function ChatPage() {
         const userMsg = messages[aiMsgIndex - 1];
         if (!userMsg || userMsg.role !== 'user') return;
 
-        // Re-send the user prompt without truncating (appends to bottom)
-        handleSend(userMsg.content);
+        // Re-send the user prompt with current search options
+        handleSend(userMsg.content, { isWebSearch, isThinking, isImageSearch, isNewsSearch });
     };
 
     const handleRenameChat = async (chatId, newTitle) => {
@@ -366,6 +370,14 @@ export default function ChatPage() {
                         isLoading={isLoading}
                         onStop={isStreaming ? handleStop : null}
                         isHero={isChatEmpty}
+                        isWebSearch={isWebSearch}
+                        setIsWebSearch={setIsWebSearch}
+                        isThinking={isThinking}
+                        setIsThinking={setIsThinking}
+                        isImageSearch={isImageSearch}
+                        setIsImageSearch={setIsImageSearch}
+                        isNewsSearch={isNewsSearch}
+                        setIsNewsSearch={setIsNewsSearch}
                     />
                 </div>
 

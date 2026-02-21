@@ -49,6 +49,9 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
+            // Note: Sending sensitive data in the request body is standard. 
+            // In DevTools (Network tab), you will see the payload of your own request.
+            // Security is handled by HTTPS, which encrypts this data in transit.
             const response = await client.post(config.endpoints.auth.login, { email, password });
             const { access_token } = response.data;
             localStorage.setItem('token', access_token);

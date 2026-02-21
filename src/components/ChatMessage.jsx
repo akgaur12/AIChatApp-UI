@@ -17,11 +17,11 @@ const CodeBlock = ({ children, ...props }) => {
     };
 
     return (
-        <div className="relative my-4 group/code">
+        <div className="relative my-6 group/code">
             <div className="absolute right-3 top-3 z-10 opacity-0 group-hover/code:opacity-100 transition-opacity">
                 <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-background/80 dark:bg-white/10 text-muted-foreground hover:text-foreground text-xs backdrop-blur-md border border-border transition-all shadow-sm"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-background/80 dark:bg-white/10 text-muted-foreground hover:text-foreground text-xs backdrop-blur-md border border-border transition-all shadow-sm"
                     title="Copy code"
                 >
                     {copied ? (
@@ -37,9 +37,14 @@ const CodeBlock = ({ children, ...props }) => {
                     )}
                 </button>
             </div>
-            <div className="overflow-x-auto w-full bg-muted/40 rounded-xl p-4 text-sm font-mono text-foreground shadow-sm border border-border/50">
-                <pre ref={codeRef} className="!bg-transparent !p-0 !m-0" {...props}>
-                    {children}
+            <div className="overflow-x-auto w-full bg-muted/30 dark:bg-[#0d1117] rounded-xl border border-border/50 shadow-sm">
+                <pre ref={codeRef} className="!bg-transparent p-5 !m-0 font-mono text-sm leading-relaxed text-foreground dark:text-foreground" {...props}>
+                    {React.Children.map(children, child => {
+                        if (React.isValidElement(child)) {
+                            return React.cloneElement(child, { isBlock: true });
+                        }
+                        return child;
+                    })}
                 </pre>
             </div>
         </div>
@@ -78,7 +83,7 @@ export default function ChatMessage({ message, onRegenerate }) {
                         "prose-headings:font-bold prose-headings:tracking-tight prose-headings:mt-6 prose-headings:mb-4",
                         "prose-a:text-blue-500 prose-a:font-medium hover:prose-a:text-blue-600 prose-a:underline prose-a:underline-offset-4",
                         "prose-strong:font-bold",
-                        "prose-code:text-primary prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded-sm prose-code:before:content-none prose-code:after:content-none",
+                        "prose-code:text-foreground prose-code:font-medium prose-code:before:content-none prose-code:after:content-none",
                         "prose-pre:bg-[#1E1E1E] prose-pre:border prose-pre:border-white/10 prose-pre:shadow-xl",
                         "prose-ol:list-decimal prose-ul:list-disc",
                         "prose-li:my-1",
@@ -91,11 +96,26 @@ export default function ChatMessage({ message, onRegenerate }) {
                             rehypePlugins={[rehypeRaw]}
                             components={{
                                 pre: CodeBlock,
-                                code: ({ node, inline, ...props }) => (
-                                    inline ?
-                                        <code className="bg-muted px-1.5 py-0.5 rounded-md text-sm font-medium" {...props} /> :
-                                        <code {...props} />
-                                ),
+                                code: ({ node, className, children, isBlock, ...props }) => {
+                                    const match = /language-(\w+)/.exec(className || '');
+
+                                    if (!isBlock && !match) {
+                                        return (
+                                            <code
+                                                className="bg-muted px-1.5 py-0.5 rounded-md text-sm font-medium text-foreground"
+                                                {...props}
+                                            >
+                                                {children}
+                                            </code>
+                                        );
+                                    }
+
+                                    return (
+                                        <code className={cn(className, "text-foreground")} {...props}>
+                                            {children}
+                                        </code>
+                                    );
+                                },
                                 table: ({ node, ...props }) => (
                                     <div className="my-6 w-full overflow-hidden rounded-lg border border-border/50 bg-transparent transition-all">
                                         <div className="overflow-x-auto">
@@ -114,7 +134,7 @@ export default function ChatMessage({ message, onRegenerate }) {
                                         {...props}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-blue-500 hover:text-blue-600 underline underline-offset-4 decoration-2 inline-flex items-center gap-1 group/link"
+                                        className="text-blue-500 hover:text-blue-600 underline underline-offset-4 decoration-2 inline-flex items-center gap-1 group/link break-all"
                                     >
                                         <span className="inline-block">{props.children}</span>
                                         <ExternalLink className="h-3 w-3 opacity-70 group-hover/link:opacity-100 transition-opacity" />

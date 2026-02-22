@@ -86,10 +86,25 @@ export default function ChatMessage({ message, onRegenerate }) {
                         "prose-code:text-foreground prose-code:font-medium prose-code:before:content-none prose-code:after:content-none",
                         "prose-pre:bg-[#1E1E1E] prose-pre:border prose-pre:border-white/10 prose-pre:shadow-xl",
                         "prose-ol:list-decimal prose-ul:list-disc",
-                        "prose-li:my-1",
-                        "prose-table:border-collapse prose-table:w-full prose-table:my-6",
                         "prose-th:font-semibold prose-th:text-xs prose-th:uppercase prose-th:tracking-wider",
-                        "prose-td:text-sm"
+                        "prose-td:text-sm",
+                        "blue:prose-p:text-[hsl(210_40%_98%)] blue:prose-headings:text-[hsl(210_40%_98%)] blue:prose-strong:text-[hsl(210_40%_98%)] blue:prose-li:text-[hsl(210_40%_98%)] blue:text-[hsl(210_40%_98%)]",
+                        "light-mint:prose-p:text-[hsl(160_40%_15%)] light-mint:prose-headings:text-[hsl(160_40%_15%)] light-mint:prose-strong:text-[hsl(160_40%_15%)] light-mint:prose-li:text-[hsl(160_40%_15%)] light-mint:text-[hsl(160_40%_15%)]",
+                        "midnight-green:prose-p:text-[hsl(220_14%_96%)] midnight-green:prose-headings:text-[hsl(220_14%_96%)] midnight-green:prose-strong:text-[hsl(220_14%_96%)] midnight-green:prose-li:text-[hsl(220_14%_96%)] midnight-green:text-[hsl(220_14%_96%)]",
+                        "deep-slate:prose-p:text-[hsl(0_0%_93%)] deep-slate:prose-headings:text-[hsl(0_0%_93%)] deep-slate:prose-strong:text-[hsl(0_0%_93%)] deep-slate:prose-li:text-[hsl(0_0%_93%)] deep-slate:text-[hsl(0_0%_93%)]",
+                        "carbon-black:prose-p:text-[hsl(240_5%_96%)] carbon-black:prose-headings:text-[hsl(240_5%_96%)] carbon-black:prose-strong:text-[hsl(240_5%_96%)] carbon-black:prose-li:text-[hsl(240_5%_96%)] carbon-black:text-[hsl(240_5%_96%)]",
+                        "deep-graphite:prose-p:text-[hsl(0_0%_98%)] deep-graphite:prose-headings:text-[hsl(0_0%_98%)] deep-graphite:prose-strong:text-[hsl(0_0%_98%)] deep-graphite:prose-li:text-[hsl(0_0%_98%)] deep-graphite:text-[hsl(0_0%_98%)]",
+                        "midnight-blue:prose-p:text-[hsl(210_40%_96%)] midnight-blue:prose-headings:text-[hsl(210_40%_96%)] midnight-blue:prose-strong:text-[hsl(210_40%_96%)] midnight-blue:prose-li:text-[hsl(210_40%_96%)] midnight-blue:text-[hsl(210_40%_96%)]",
+                        "earth-tone:prose-p:text-[hsl(30_30%_20%)] earth-tone:prose-headings:text-[hsl(30_30%_20%)] earth-tone:prose-strong:text-[hsl(30_30%_20%)] earth-tone:prose-li:text-[hsl(30_30%_20%)] earth-tone:text-[hsl(30_30%_20%)]",
+                        "warm-sun:prose-p:text-[hsl(47_68%_20%)] warm-sun:prose-headings:text-[hsl(47_68%_20%)] warm-sun:prose-strong:text-[hsl(47_68%_20%)] warm-sun:prose-li:text-[hsl(47_68%_20%)] warm-sun:text-[hsl(47_68%_20%)]",
+                        "peach-coral:prose-p:text-[hsl(11_66%_20%)] peach-coral:prose-headings:text-[hsl(11_66%_20%)] peach-coral:prose-strong:text-[hsl(11_66%_20%)] peach-coral:prose-li:text-[hsl(11_66%_20%)] peach-coral:text-[hsl(11_66%_20%)]",
+                        "lavender-indigo:prose-p:text-[hsl(235_50%_20%)] lavender-indigo:prose-headings:text-[hsl(235_50%_20%)] lavender-indigo:prose-strong:text-[hsl(235_50%_20%)] lavender-indigo:prose-li:text-[hsl(235_50%_20%)] lavender-indigo:text-[hsl(235_50%_20%)]",
+
+                        "sage-green:prose-p:text-[hsl(165_25%_20%)] sage-green:prose-headings:text-[hsl(165_25%_20%)] sage-green:prose-strong:text-[hsl(165_25%_20%)] sage-green:prose-li:text-[hsl(165_25%_20%)] sage-green:text-[hsl(165_25%_20%)]",
+                        "warm-stone:prose-p:text-[hsl(10_5%_10%)] warm-stone:prose-headings:text-[hsl(10_5%_10%)] warm-stone:prose-strong:text-[hsl(10_5%_10%)] warm-stone:prose-li:text-[hsl(10_5%_10%)] warm-stone:text-[hsl(10_5%_10%)]",
+                        "terracotta-clay:prose-p:text-[hsl(15_50%_20%)] terracotta-clay:prose-headings:text-[hsl(15_50%_20%)] terracotta-clay:prose-strong:text-[hsl(15_50%_20%)] terracotta-clay:prose-li:text-[hsl(15_50%_20%)] terracotta-clay:text-[hsl(15_50%_20%)]",
+                        "steel-blue:prose-p:text-[hsl(220_35%_20%)] steel-blue:prose-headings:text-[hsl(220_35%_20%)] steel-blue:prose-strong:text-[hsl(220_35%_20%)] steel-blue:prose-li:text-[hsl(220_35%_20%)] steel-blue:text-[hsl(220_35%_20%)]",
+                        "mocha-brown:prose-p:text-[hsl(35_30%_20%)] mocha-brown:prose-headings:text-[hsl(35_30%_20%)] mocha-brown:prose-strong:text-[hsl(35_30%_20%)] mocha-brown:prose-li:text-[hsl(35_30%_20%)] mocha-brown:text-[hsl(35_30%_20%)]"
                     )}>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}

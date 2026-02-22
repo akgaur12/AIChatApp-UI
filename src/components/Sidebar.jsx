@@ -20,7 +20,10 @@ import {
     Share2,
     PanelLeft,
     PanelRight,
-    Info
+    Info,
+    Palette,
+    ChevronRight,
+    ChevronLeft
 } from 'lucide-react';
 import ChangePasswordModal from './ChangePasswordModal';
 import ProfileModal from './ProfileModal';
@@ -48,6 +51,7 @@ export default function Sidebar({
 
     // Menu State
     const [menuOpen, setMenuOpen] = useState(false);
+    const [showThemeMenu, setShowThemeMenu] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [showAboutModal, setShowAboutModal] = useState(false);
@@ -74,6 +78,7 @@ export default function Sidebar({
         function handleClickOutside(event) {
             if (menuRef.current && !menuRef.current.contains(event.target) && profileTriggerRef.current && !profileTriggerRef.current.contains(event.target)) {
                 setMenuOpen(false);
+                setShowThemeMenu(false);
             }
             // Close chat action menu on global click
             // We rely on stopPropagation on the trigger button to prevent this from firing immediately on toggle
@@ -270,6 +275,7 @@ export default function Sidebar({
                                     e.stopPropagation();
                                     if (menuOpen) {
                                         setMenuOpen(false);
+                                        setShowThemeMenu(false);
                                     } else {
                                         const rect = e.currentTarget.getBoundingClientRect();
                                         setProfileMenuPosition({
@@ -277,6 +283,7 @@ export default function Sidebar({
                                             bottom: window.innerHeight - rect.top + 10 // Position above
                                         });
                                         setMenuOpen(true);
+                                        setShowThemeMenu(false);
                                     }
                                 }}
                             >
@@ -366,47 +373,225 @@ export default function Sidebar({
                         }}
                     >
                         <div className="p-2 space-y-1">
-                            <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                                My Account
-                            </div>
-                            <button
-                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                                onClick={() => { setMenuOpen(false); setShowProfileModal(true); }}
-                            >
-                                <UserIconLucide className="mr-2 h-4 w-4" />
-                                <span>Profile</span>
-                            </button>
-                            <button
-                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                                onClick={() => { setMenuOpen(false); setShowPasswordModal(true); }}
-                            >
-                                <KeyRound className="mr-2 h-4 w-4" />
-                                <span>Change Password</span>
-                            </button>
-                            <div className="h-px bg-muted my-1" />
-                            <button
-                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                            >
-                                {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-                                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                            </button>
-                            <div className="h-px bg-muted my-1" />
-                            <button
-                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                                onClick={() => { setMenuOpen(false); setShowAboutModal(true); }}
-                            >
-                                <Info className="mr-2 h-4 w-4" />
-                                <span>About Us</span>
-                            </button>
-                            <div className="h-px bg-muted my-1" />
-                            <button
-                                className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-destructive hover:text-destructive-foreground cursor-pointer text-destructive"
-                                onClick={() => { setMenuOpen(false); logout(); }}
-                            >
-                                <LogOut className="mr-2 h-4 w-4" />
-                                <span>Log out</span>
-                            </button>
+                            {!showThemeMenu ? (
+                                <>
+                                    <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                                        My Account
+                                    </div>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={() => { setMenuOpen(false); setShowProfileModal(true); }}
+                                    >
+                                        <UserIconLucide className="mr-2 h-4 w-4" />
+                                        <span>Profile</span>
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={() => { setMenuOpen(false); setShowPasswordModal(true); }}
+                                    >
+                                        <KeyRound className="mr-2 h-4 w-4" />
+                                        <span>Change Password</span>
+                                    </button>
+                                    <div className="h-px bg-muted my-1" />
+                                    <button
+                                        className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setShowThemeMenu(true); }}
+                                    >
+                                        <div className="flex items-center">
+                                            <Palette className="mr-2 h-4 w-4" />
+                                            <span>Themes</span>
+                                        </div>
+                                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                    </button>
+                                    <div className="h-px bg-muted my-1" />
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={() => { setMenuOpen(false); setShowAboutModal(true); }}
+                                    >
+                                        <Info className="mr-2 h-4 w-4" />
+                                        <span>About Us</span>
+                                    </button>
+                                    <div className="h-px bg-muted my-1" />
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-destructive hover:text-destructive-foreground cursor-pointer text-destructive"
+                                        onClick={() => { setMenuOpen(false); logout(); }}
+                                    >
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        <span>Log out</span>
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-1 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer mb-1"
+                                        onClick={(e) => { e.stopPropagation(); setShowThemeMenu(false); }}
+                                    >
+                                        <ChevronLeft className="mr-1 h-4 w-4 text-muted-foreground" />
+                                        <span className="font-semibold">Back</span>
+                                    </button>
+                                    <div className="h-px bg-muted my-1" />
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('light'); }}
+                                    >
+                                        <Sun className="mr-2 h-4 w-4" />
+                                        <span>Light</span>
+                                        {theme === 'light' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('dark'); }}
+                                    >
+                                        <Moon className="mr-2 h-4 w-4" />
+                                        <span>Dark</span>
+                                        {theme === 'dark' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('blue'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Blue</span>
+                                        {theme === 'blue' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('quite-light'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Quite Light</span>
+                                        {theme === 'quite-light' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    {/* <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('clean-blue'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Clean Blue</span>
+                                        {theme === 'clean-blue' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button> */}
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('light-mint'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Light Mint</span>
+                                        {theme === 'light-mint' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('cool-gray'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Cool Gray</span>
+                                        {theme === 'cool-gray' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('midnight-green'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Midnight Green</span>
+                                        {theme === 'midnight-green' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('deep-slate'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Deep Slate</span>
+                                        {theme === 'deep-slate' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('carbon-black'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Carbon Black</span>
+                                        {theme === 'carbon-black' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('deep-graphite'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Deep Graphite</span>
+                                        {theme === 'deep-graphite' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('earth-tone'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Earth Tone</span>
+                                        {theme === 'earth-tone' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('warm-sun'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Warm Sun</span>
+                                        {theme === 'warm-sun' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('peach-coral'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Peach Coral</span>
+                                        {theme === 'peach-coral' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('terracotta-clay'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Terracotta Clay</span>
+                                        {theme === 'terracotta-clay' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('mocha-brown'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Mocha Brown</span>
+                                        {theme === 'mocha-brown' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('steel-blue'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Steel Blue</span>
+                                        {theme === 'steel-blue' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('lavender-indigo'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Lavender Indigo</span>
+                                        {theme === 'lavender-indigo' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('sage-green'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Sage Green</span>
+                                        {theme === 'sage-green' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                    <button
+                                        className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                                        onClick={(e) => { e.stopPropagation(); setTheme('warm-stone'); }}
+                                    >
+                                        <Palette className="mr-2 h-4 w-4" />
+                                        <span>Warm Stone</span>
+                                        {theme === 'warm-stone' && <Check className="ml-auto h-4 w-4 text-primary" />}
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>,
                     document.body

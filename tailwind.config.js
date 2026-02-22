@@ -82,5 +82,26 @@ export default {
     },
     plugins: [
         require('@tailwindcss/typography'),
+        function ({ addVariant }) {
+            addVariant('blue', '.blue &')
+            addVariant('clean-blue', '.clean-blue &')
+            addVariant('quite-light', '.quite-light &')
+            addVariant('light-mint', '.light-mint &')
+            addVariant('cool-gray', '.cool-gray &')
+            addVariant('midnight-green', '.midnight-green &')
+            addVariant('deep-slate', '.deep-slate &')
+            addVariant('carbon-black', '.carbon-black &')
+            addVariant('deep-graphite', '.deep-graphite &')
+            addVariant('midnight-blue', '.midnight-blue &')
+            addVariant('earth-tone', '.earth-tone &')
+            addVariant('warm-sun', '.warm-sun &')
+            addVariant('peach-coral', '.peach-coral &')
+            addVariant('lavender-indigo', '.lavender-indigo &')
+            addVariant('sage-green', '.sage-green &')
+            addVariant('warm-stone', '.warm-stone &')
+            addVariant('terracotta-clay', '.terracotta-clay &')
+            addVariant('steel-blue', '.steel-blue &')
+            addVariant('mocha-brown', '.mocha-brown &')
+        }
     ],
 }

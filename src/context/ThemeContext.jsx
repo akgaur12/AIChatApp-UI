@@ -18,7 +18,7 @@ export function ThemeProvider({
     useEffect(() => {
         const root = window.document.documentElement
 
-        root.classList.remove("light", "dark")
+        root.classList.remove("light", "dark", "quite-light", "blue", "clean-blue", "light-mint", "cool-gray", "midnight-green", "deep-slate", "carbon-black", "deep-graphite", "midnight-blue", "earth-tone", "warm-sun", "peach-coral", "lavender-indigo", "sage-green", "warm-stone", "terracotta-clay", "steel-blue", "mocha-brown")
 
         if (theme === "system") {
             const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")

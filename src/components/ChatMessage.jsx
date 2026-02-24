@@ -9,6 +9,18 @@ const CodeBlock = ({ children, ...props }) => {
     const [copied, setCopied] = React.useState(false);
     const codeRef = React.useRef(null);
 
+    // Extract language from the code child
+    const getLanguage = () => {
+        const codeElement = React.Children.toArray(children).find(
+            child => React.isValidElement(child)
+        );
+        const className = codeElement?.props?.className || '';
+        const match = /language-(\w+)/.exec(className);
+        return match ? match[1] : '';
+    };
+
+    const language = getLanguage();
+
     const handleCopy = () => {
         const content = codeRef.current?.innerText || '';
         navigator.clipboard.writeText(content);
@@ -17,28 +29,25 @@ const CodeBlock = ({ children, ...props }) => {
     };
 
     return (
-        <div className="relative my-6 group/code">
-            <div className="absolute right-3 top-3 z-10 opacity-0 group-hover/code:opacity-100 transition-opacity">
+        <div className="relative my-6 group/code bg-muted/20 dark:bg-[#0d1117] rounded-xl border border-border/50 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-4 pt-3 pb-1">
+                <span className="text-[13px] font-mono text-muted-foreground/70 lowercase">
+                    {language || 'code'}
+                </span>
                 <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-background/80 dark:bg-white/10 text-muted-foreground hover:text-foreground text-xs backdrop-blur-md border border-border transition-all shadow-sm"
+                    className="p-1.5 rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-all"
                     title="Copy code"
                 >
                     {copied ? (
-                        <>
-                            <Check className="h-3.5 w-3.5" />
-                            <span>Copied!</span>
-                        </>
+                        <Check className="h-4 w-4 text-green-500" />
                     ) : (
-                        <>
-                            <Copy className="h-3.5 w-3.5" />
-                            <span>Copy</span>
-                        </>
+                        <Copy className="h-4 w-4" />
                     )}
                 </button>
             </div>
-            <div className="overflow-x-auto w-full bg-muted/30 dark:bg-[#0d1117] rounded-xl border border-border/50 shadow-sm">
-                <pre ref={codeRef} className="!bg-transparent p-5 !m-0 font-mono text-sm leading-relaxed text-foreground dark:text-foreground" {...props}>
+            <div className="overflow-x-auto w-full">
+                <pre ref={codeRef} className="!border-none !bg-transparent px-5 pb-5 pt-1 !m-0 font-mono text-sm leading-relaxed text-foreground dark:text-foreground" {...props}>
                     {React.Children.map(children, child => {
                         if (React.isValidElement(child)) {
                             return React.cloneElement(child, { isBlock: true });

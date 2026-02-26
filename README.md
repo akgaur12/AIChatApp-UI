@@ -6,6 +6,17 @@
 ## Overview
 A modern, responsive, and feature-rich AI Chat interface built with React, Vite, and Tailwind CSS. This application provides a seamless chat experience with support for authentication, conversation history, and advanced AI services like web search and "thinking" modes.
 
+<table border="0">
+  <tr>
+    <td><img src="public/img01.png" width="400" alt="UI Screenshot 1"></td>
+    <td><img src="public/img02.png" width="400" alt="UI Screenshot 2"></td>
+  </tr>
+  <tr>
+    <td><img src="public/img03.png" width="400" alt="UI Screenshot 3"></td>
+    <td><img src="public/img04.png" width="400" alt="UI Screenshot 4"></td>
+  </tr>
+</table>
+
 ## ✨ Features
 
 - **🔐 Secure Authentication**: Full signup, login, and password management (change/reset) flows.

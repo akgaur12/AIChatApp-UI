@@ -4,7 +4,7 @@
 <br/>
 
 ## Overview
-A modern, responsive, and feature-rich AI Chat interface built with React, Vite, and Tailwind CSS. This application provides a seamless chat experience with support for authentication, conversation history, and advanced AI services like web search and "thinking" modes.
+A modern, responsive, and feature-rich AI Chat interface built with React, Vite, and Tailwind CSS. This application provides a seamless chat experience with support for authentication, conversation history, and advanced AI services like web search, image search, news search, and "thinking" modes.
 
 <table border="0">
   <tr>
@@ -21,24 +21,25 @@ A modern, responsive, and feature-rich AI Chat interface built with React, Vite,
 
 - **🔐 Secure Authentication**: Full signup, login, and password management (change/reset) flows.
 - **💬 Real-time Chat**: Smooth, streaming chat interface with markdown support.
-- **🔍 Advanced AI Services**: Toggle between standard chat, web search, and thinking models.
-- **📜 Conversation History**: Sidebar with persistent chat history, including renaming and deleting conversations.
+- **🔍 Advanced AI Services**: Toggle between standard chat, web search, image search, news search, and thinking models.
+- **📜 Conversation History**: Sidebar with persistent chat history, including renaming, deleted, and sharing conversations.
+- **📤 Sharing & Export**: Easily share conversation links or download chats for offline viewing.
 - **🎨 Premium UI/UX**:
-  - Dark/Light mode support.
-  - Smooth animations with Framer Motion.
-  - Responsive design for all devices.
-  - Interactive modals for Profile, About Us, and Settings.
+  - **Dynamic Themes**: 15+ professionally designed color themes (Blue, Midnight Green, Deep Slate, Carbon Black, etc.).
+  - **Animated UI**: Smooth transitions and animations with Framer Motion.
+  - **Responsive Design**: Optimized for mobile, tablet, and desktop.
+  - **Interactive Modals**: Dedicated modals for Profile, About Us, and Settings.
 - **🛠️ Robust Architecture**: Integrated with a [FastAPI backend](https://github.com/akgaur12/AIChatApp) for real-time streaming and data persistence.
 
 ## 🚀 Tech Stack
 
 - **Frontend**: React 18, Vite
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS, Tailwind Typography
 - **Animations**: Framer Motion
-- **Routing**: React Router DOM (v7)
+- **Routing**: React Router (v7)
 - **Icons**: Lucide React
 - **Markdown**: React Markdown, Remark GFM, Rehype Raw
-- **API Client**: Axios
+- **Data Fetching**: Axios
 
 ## 🛠️ Getting Started
 
@@ -61,10 +62,10 @@ A modern, responsive, and feature-rich AI Chat interface built with React, Vite,
    ```
 
 3. Configure Environment:
-   The application connects to the backend API. Update `src/config.js` if your backend is running on a different host/port.
+   The application connects to the backend API. Update `src/config.js` to point to your backend service.
    ```javascript
    // src/config.js
-   API_BASE_URL: "http://localhost:45001"
+   API_BASE_URL: "http://0.0.0.0:45001"
    ```
 
 ### Development
@@ -97,37 +98,34 @@ npm run preview
 ├── package-lock.json
 ├── postcss.config.js
 ├── public
-│   ├── apple-touch-icon.png
-│   ├── auth_banner.png
-│   ├── favicon.png
-│   └── logo.png
+│   ├── auth_banner.png
+│   ├── favicon.png
+│   └── logo.png
 ├── README.md
 ├── src
-│   ├── api
-│   │   └── client.js
-│   ├── App.jsx
-│   ├── components
-│   │   ├── AboutModal.jsx
-│   │   ├── ChangePasswordModal.jsx
-│   │   ├── ChatArea.jsx
-│   │   ├── ChatInput.jsx
-│   │   ├── ChatMessage.jsx
-│   │   ├── ProfileModal.jsx
-│   │   ├── ProtectedRoute.jsx
-│   │   └── Sidebar.jsx
-│   ├── config.js
-│   ├── context
-│   │   ├── AuthContext.jsx
-│   │   └── ThemeContext.jsx
-│   ├── index.css
-│   ├── layouts
-│   ├── lib
-│   │   ├── jwt.js
-│   │   └── utils.js
-│   ├── main.jsx
-│   └── pages
-│       ├── AuthPage.jsx
-│       └── ChatPage.jsx
+│   ├── api
+│   │   └── client.js           # Axios instance & interceptors
+│   ├── App.jsx                 # Main application component
+│   ├── components              # UI components
+│   │   ├── AboutModal.jsx
+│   │   ├── ChangePasswordModal.jsx
+│   │   ├── ChatArea.jsx
+│   │   ├── ChatInput.jsx
+│   │   ├── ChatMessage.jsx
+│   │   ├── ProfileModal.jsx
+│   │   ├── ProtectedRoute.jsx
+│   │   ├── ShareModal.jsx      # Conversation sharing
+│   │   └── Sidebar.jsx        # Sidebar with theme & chat management
+│   ├── config.js               # Centralized configuration
+│   ├── context                 # Global state (Auth, Theme)
+│   │   ├── AuthContext.jsx
+│   │   └── ThemeContext.jsx
+│   ├── index.css               # Global styles & theme definitions
+│   ├── lib                     # Utility functions (JWT, UI)
+│   ├── main.jsx                # Entry point
+│   └── pages                   # Page-level components
+│       ├── AuthPage.jsx
+│       └── ChatPage.jsx
 ├── tailwind.config.js
 └── vite.config.js
 

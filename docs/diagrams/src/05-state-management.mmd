@@ -1,0 +1,47 @@
+graph LR
+    subgraph Global["Global Context (React Context API)"]
+        subgraph AuthCtx["AuthContext — src/context/AuthContext.jsx"]
+            AU["user {email, name}"]
+            AL["loading: bool"]
+            AFNS["login() signup() logout()<br/>deleteAccount()<br/>setUserFromToken()"]
+        end
+
+        subgraph ThemeCtx["ThemeContext — src/context/ThemeContext.jsx"]
+            TH["theme: string<br/>(dark by default)"]
+            TFN["setTheme()"]
+        end
+    end
+
+    subgraph LocalStorage["localStorage"]
+        TOK["'token' — JWT"]
+        THM["'vite-ui-theme' — theme name"]
+    end
+
+    subgraph PageState["ChatPage Local State — src/pages/ChatPage.jsx"]
+        MSG["messages[]<br/>{id, role, content, isStreaming}"]
+        CONVS["conversations[]<br/>{id, title, messages[]}"]
+        CID["currentChatId"]
+        ISTR["isStreaming: bool"]
+        ILOAD["isLoading: bool"]
+        SVSVC["selectedService<br/>isWebSearch, isThinking<br/>isImageSearch, isNewsSearch"]
+        ABORT["abortControllerRef"]
+        SBOPEN["isSidebarOpen: bool"]
+        MODAL["modal open states<br/>profileOpen, shareOpen"]
+    end
+
+    subgraph SidebarState["Sidebar Local State — src/components/Sidebar.jsx"]
+        SEARCH["searchQuery: string"]
+        RENAME["renamingId, renameValue"]
+        DELMENU["openMenuId"]
+    end
+
+    AuthCtx --> TOK
+    ThemeCtx --> THM
+    AuthCtx -.->|"reads on init"| TOK
+    ThemeCtx -.->|"reads on init"| THM
+
+    AuthCtx -->|"user, login, logout"| PageState
+    ThemeCtx -->|"theme class on html element"| TH
+
+    ABORT -->|"cancels"| MSG
+    MSG -->|"rendered by"| SBOpen

@@ -1,0 +1,61 @@
+graph TB
+    subgraph Browser["Browser (Port 45002)"]
+        subgraph Providers["Context Providers"]
+            TP["ThemeProvider<br/>src/context/ThemeContext.jsx"]
+            AP["AuthProvider<br/>src/context/AuthContext.jsx"]
+        end
+
+        subgraph Router["React Router v7"]
+            PUB["Public Routes<br/>/login, /signup<br/>/forgot-password, /reset-password"]
+            PR["ProtectedRoute<br/>src/components/ProtectedRoute.jsx"]
+            CHAT["ChatPage<br/>src/pages/ChatPage.jsx"]
+            AUTH["AuthPage<br/>src/pages/AuthPage.jsx"]
+        end
+
+        subgraph Components["UI Components"]
+            SB["Sidebar<br/>Conversations + Theme"]
+            CA["ChatArea<br/>Message Display"]
+            CI["ChatInput<br/>Input + Service Toggles"]
+            CM["ChatMessage<br/>Markdown Renderer"]
+        end
+
+        subgraph State["Client State"]
+            LS["localStorage<br/>token, vite-ui-theme"]
+        end
+
+        AX["Axios Client<br/>src/api/client.js<br/>Auto Bearer token"]
+        FETCH["Fetch API<br/>SSE Stream Reader"]
+    end
+
+    subgraph Backend["Backend API (Port 45001)"]
+        AUTHAPI["Auth Service<br/>/auth/*"]
+        CHATAPI["Chat Service<br/>/chat/*"]
+        STREAM["SSE Endpoint<br/>/chat/run_pipeline/stream"]
+    end
+
+    subgraph ExternalSvcs["External Services (via Backend)"]
+        WS["Web Search"]
+        IS["Image Search"]
+        NS["News Search"]
+        LLM["LLM / Thinking Mode"]
+    end
+
+    TP --> AP --> Router
+    PR --> CHAT
+    PUB --> AUTH
+    CHAT --> SB
+    CHAT --> CA
+    CHAT --> CI
+    CA --> CM
+
+    AX -->|"REST: Login, CRUD, History"| AUTHAPI
+    AX -->|"REST: Conversations"| CHATAPI
+    FETCH -->|"SSE POST /chat/run_pipeline/stream"| STREAM
+
+    AUTHAPI --> LS
+    AP --> LS
+
+    STREAM --> WS
+    STREAM --> IS
+    STREAM --> NS
+    STREAM --> LLM

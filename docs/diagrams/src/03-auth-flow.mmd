@@ -1,0 +1,49 @@
+sequenceDiagram
+    actor User
+    participant AuthPage as AuthPage
+    participant AuthCtx as AuthContext
+    participant AxiosClient as Axios Client
+    participant Backend as Backend API
+    participant LocalStorage as localStorage
+
+    User->>AuthPage: Enter credentials and submit
+
+    alt Login
+        AuthPage->>AuthCtx: login(email, password)
+        AuthCtx->>AxiosClient: POST /auth/login-json
+        AxiosClient->>Backend: {username, password}
+        Backend-->>AxiosClient: {access_token: JWT}
+        AxiosClient-->>AuthCtx: response
+        AuthCtx->>LocalStorage: setItem('token', JWT)
+        AuthCtx->>AuthCtx: setUserFromToken(JWT) - decodes claims
+        AuthCtx-->>AuthPage: success
+        AuthPage->>AuthPage: navigate('/chat')
+    else Signup
+        AuthPage->>AuthCtx: signup(name, email, password, role)
+        AuthCtx->>AxiosClient: POST /auth/signup
+        AxiosClient->>Backend: {name, email, password, role}
+        Backend-->>AxiosClient: success
+        AuthCtx-->>AuthPage: success
+        AuthPage->>AuthPage: navigate('/login')
+    else Forgot Password
+        AuthPage->>AxiosClient: POST /auth/forget-password
+        AxiosClient->>Backend: {email}
+        Backend-->>AuthPage: OTP sent
+        AuthPage->>AuthPage: show OTP reset form
+    end
+
+    Note over AuthPage,LocalStorage: Every route change - ProtectedRoute checks auth
+    AuthCtx->>LocalStorage: getItem('token')
+    AuthCtx->>AuthCtx: isTokenExpired(token)
+    alt token valid
+        AuthCtx-->>AuthPage: user authenticated
+    else token missing or expired
+        AuthCtx->>LocalStorage: removeItem('token')
+        AuthCtx-->>AuthPage: redirect to /login
+    end
+
+    Note over AxiosClient,Backend: All requests - auto-attach token
+    AxiosClient->>AxiosClient: request interceptor adds Authorization header
+    Backend-->>AxiosClient: 401 Unauthorized
+    AxiosClient->>LocalStorage: removeItem('token')
+    AxiosClient->>AuthCtx: trigger logout handler

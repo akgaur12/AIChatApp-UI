@@ -1,0 +1,63 @@
+sequenceDiagram
+    actor User
+    participant ChatInput as ChatInput
+    participant ChatPage as ChatPage
+    participant ChatArea as ChatArea
+    participant FetchAPI as Fetch API
+    participant Backend as Backend SSE Endpoint
+    participant LLM as LLM and Services
+
+    User->>ChatInput: type message and press Send
+    ChatInput->>ChatPage: handleSend(text, options)
+
+    ChatPage->>ChatPage: create AbortController
+    ChatPage->>ChatPage: add optimistic user message to state
+    ChatPage->>ChatArea: render user message immediately
+
+    ChatPage->>FetchAPI: POST /chat/run_pipeline/stream
+    Note over FetchAPI,Backend: Headers: Authorization Bearer token, Content-Type JSON
+    Note over FetchAPI,Backend: Body: {user_query, service_name, conversation_id}
+
+    FetchAPI->>Backend: HTTP request with streaming
+    Backend->>LLM: route to service (chat, web_search, thinking, image_search, news_search)
+    LLM-->>Backend: token stream
+
+    loop SSE chunk loop
+        Backend-->>FetchAPI: data: {type:'content', content:'chunk'}
+        FetchAPI-->>ChatPage: reader.read() resolves
+        ChatPage->>ChatPage: append chunk to assistant message
+        ChatPage->>ChatArea: re-render with new content
+        ChatArea->>ChatArea: auto-scroll to bottom
+    end
+
+    alt metadata event
+        Backend-->>FetchAPI: data: {type:'metadata', conversation_id:'id'}
+        FetchAPI-->>ChatPage: reader.read() resolves
+        ChatPage->>ChatPage: set currentChatId
+        ChatPage->>ChatPage: fetchConversations() to refresh sidebar
+    end
+
+    alt error event
+        Backend-->>FetchAPI: data: {type:'error', detail:'message'}
+        FetchAPI-->>ChatPage: reader.read() resolves
+        ChatPage->>ChatPage: set error state on message
+    end
+
+    Backend-->>FetchAPI: stream ends
+    ChatPage->>ChatPage: isStreaming = false
+    ChatPage->>ChatArea: render final message
+
+    alt User clicks Stop
+        User->>ChatInput: click Stop button
+        ChatInput->>ChatPage: abortControllerRef.current.abort()
+        FetchAPI-->>ChatPage: AbortError thrown
+        ChatPage->>ChatPage: isStreaming = false
+    end
+
+    alt User clicks Regenerate
+        User->>ChatArea: click Regenerate on assistant message
+        ChatArea->>ChatPage: handleRegenerate(messageId)
+        ChatPage->>ChatPage: find last user message
+        ChatPage->>ChatPage: remove last assistant message
+        ChatPage->>ChatPage: call handleSend with same query
+    end

@@ -1,0 +1,32 @@
+flowchart TD
+    START([User opens app]) --> ROOT{Visit '/'}
+    ROOT -->|redirect| CHAT_ROUTE["/chat"]
+
+    CHAT_ROUTE --> PROT{ProtectedRoute<br/>check auth}
+
+    PROT -->|"token valid + not expired"| CHATPAGE["ChatPage<br/>'/chat/:id?'"]
+    PROT -->|"no token or expired"| LOGIN["/login — AuthPage"]
+
+    LOGIN -->|"login success"| CHATPAGE
+    LOGIN -->|"go to signup"| SIGNUP["/signup — AuthPage"]
+    LOGIN -->|"forgot password"| FORGOT["/forgot-password — AuthPage"]
+
+    SIGNUP -->|"signup success"| LOGIN
+    SIGNUP -->|"back to login"| LOGIN
+
+    FORGOT -->|"OTP sent"| RESET["/reset-password — AuthPage"]
+    RESET -->|"password changed"| LOGIN
+
+    CHATPAGE -->|"/chat (no id)"| NEWCHAT["New Chat mode<br/>no conversation loaded"]
+    CHATPAGE -->|"/chat/:id"| LOADCHAT["Load conversation<br/>GET /chat/conversations/:id"]
+
+    NEWCHAT -->|"send first message"| MSGFLOW["SSE Stream<br/>gets conversation_id"]
+    MSGFLOW -->|"navigate to"| CHATPAGE
+
+    CHATPAGE -->|"sidebar click"| LOADCHAT
+
+    CATCH(["'/*' catch-all"]) -->|redirect| ROOT
+
+    style CHATPAGE fill:#1e3a5f,color:#fff
+    style LOGIN fill:#3a1e1e,color:#fff
+    style PROT fill:#3a3a1e,color:#fff

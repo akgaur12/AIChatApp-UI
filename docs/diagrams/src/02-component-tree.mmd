@@ -1,0 +1,43 @@
+graph TD
+    MAIN["main.jsx<br/>React.StrictMode"]
+    APP["App.jsx<br/>Provider stack + Routes"]
+
+    TP["ThemeProvider<br/>context/ThemeContext.jsx"]
+    AP["AuthProvider<br/>context/AuthContext.jsx"]
+
+    AUTHP["AuthPage<br/>pages/AuthPage.jsx"]
+    CHATP["ChatPage<br/>pages/ChatPage.jsx"]
+    PROTR["ProtectedRoute<br/>components/ProtectedRoute.jsx"]
+
+    SB["Sidebar<br/>components/Sidebar.jsx"]
+    CA["ChatArea<br/>components/ChatArea.jsx"]
+    CI["ChatInput<br/>components/ChatInput.jsx"]
+
+    CM["ChatMessage<br/>components/ChatMessage.jsx"]
+    CB["CodeBlock<br/>(inline in ChatMessage)"]
+
+    PM["ProfileModal<br/>components/ProfileModal.jsx"]
+    CPM["ChangePasswordModal<br/>components/ChangePasswordModal.jsx"]
+    SM["ShareModal<br/>components/ShareModal.jsx"]
+    AM["AboutModal<br/>components/AboutModal.jsx"]
+
+    MAIN --> APP
+    APP --> TP
+    TP --> AP
+    AP --> AUTHP
+    AP --> PROTR
+    PROTR --> CHATP
+
+    CHATP --> SB
+    CHATP --> CA
+    CHATP --> CI
+    CHATP --> PM
+    CHATP --> SM
+
+    CA --> CM
+    CM --> CB
+
+    SB --> CPM
+    SB --> AM
+
+    PM --> CPM

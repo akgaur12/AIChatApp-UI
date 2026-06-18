@@ -47,6 +47,7 @@ Every chapter is grounded in the **actual implementation**. Code references use 
 | 21 | [Performance Considerations](./21-performance.md) | Current characteristics, bottlenecks, optimization opportunities |
 | 22 | [Troubleshooting Guide](./22-troubleshooting.md) | Common problems and fixes |
 | 23 | [Glossary](./23-glossary.md) | Key terms and concepts |
+| — | [Architecture Diagrams](./architecture-diagrams.md) | Visual diagrams: system map, component tree, auth flow, SSE streaming, state, routing, data model, themes |
 
 ---
 

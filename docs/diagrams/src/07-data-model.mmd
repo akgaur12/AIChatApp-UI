@@ -1,0 +1,49 @@
+erDiagram
+    CONVERSATION {
+        string id PK
+        string title
+        timestamp created_at
+    }
+
+    TURN {
+        string id PK
+        string conversation_id FK
+        string user
+        string assistant
+        timestamp created_at
+    }
+
+    MESSAGE {
+        string id
+        string role
+        string content
+        timestamp created_at
+        bool isStreaming
+    }
+
+    SSE_EVENT {
+        string type
+        string content
+        string conversation_id
+        string detail
+    }
+
+    JWT_CLAIMS {
+        string sub
+        string email
+        string name
+        string preferred_username
+        string nickname
+        number exp
+    }
+
+    THEME {
+        string name
+        string cssClass
+    }
+
+    CONVERSATION ||--o{ TURN : "contains"
+    TURN ||--|| MESSAGE : "maps user to"
+    TURN ||--o| MESSAGE : "maps assistant to"
+    SSE_EVENT }o--|| CONVERSATION : "creates or extends"
+    JWT_CLAIMS ||--|| CONVERSATION : "user owns"

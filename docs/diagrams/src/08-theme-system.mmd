@@ -1,0 +1,42 @@
+graph TD
+    subgraph ThemeCtx["ThemeContext — src/context/ThemeContext.jsx"]
+        INIT["Init: read localStorage<br/>'vite-ui-theme' or default 'dark'"]
+        SET["setTheme(name)<br/>persist to localStorage"]
+        APPLY["applyTheme(name)<br/>set class on document.documentElement"]
+    end
+
+    subgraph Sidebar["Sidebar — Theme Picker UI"]
+        GRID["Theme grid buttons<br/>(20 named themes)"]
+        CLICK["User clicks theme"]
+    end
+
+    subgraph HTML["document.documentElement"]
+        CLASS["class attribute<br/>e.g. 'dark' or 'blue' or 'peach-coral'"]
+    end
+
+    subgraph CSS["src/index.css — CSS Variables"]
+        ROOT["':root' — default light vars"]
+        DARK[".dark — dark theme vars"]
+        BLUE[".blue — blue theme vars"]
+        DOTS["... 17 more theme classes"]
+
+        VARS["CSS Custom Properties<br/>--background, --foreground<br/>--primary, --secondary<br/>--accent, --muted, --border<br/>--card, --popover, --ring<br/>--destructive"]
+    end
+
+    subgraph Tailwind["tailwind.config.js"]
+        PLUGIN["addVariant plugin<br/>generates theme-specific<br/>utility variants"]
+        DM["darkMode: 'class'"]
+    end
+
+    INIT --> APPLY
+    CLICK --> SET
+    SET --> APPLY
+    APPLY --> CLASS
+    CLASS -->|"cascades"| DARK
+    CLASS -->|"cascades"| BLUE
+    CLASS -->|"cascades"| DOTS
+    DARK --> VARS
+    BLUE --> VARS
+    ROOT --> VARS
+    VARS -->|"consumed by"| PLUGIN
+    PLUGIN -->|"Tailwind utilities<br/>bg-background, text-foreground etc."| GRID
